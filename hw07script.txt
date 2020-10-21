@@ -1,0 +1,775 @@
+Script started on 2019-12-17 22:10:51-0500
+]0;chenyu@chenyu-VirtualBox: ~/CS/CS331_HW07[01;32mchenyu@chenyu-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat title.h
+//
+//  title.hpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 Yongqiang Chen. All rights reserved.
+//
+
+#ifndef title_h_
+#define title_h_
+
+#include <QObject>
+#include "qpushbutton.h"
+
+class Tile : public QPushButton
+{
+public:
+    int m_Number;
+
+public:
+    Tile(int tileNumber);
+};
+
+#endif /* title_hpp */
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat title.cpp
+//
+//  title.cpp
+//  CS331_HW07
+//
+//  Created by yongqiang chen on 12/17/19.
+//  Copyright © 2019 yongqiang chen. All rights reserved.
+//
+
+#include "title.h"
+
+Tile::Tile(int tileNumber)
+{
+    this->m_Number=tileNumber;
+    this->setText(QString::number(tileNumber+1));
+}
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ ls
+hw07script       puzzlemodel.h   puzzlewindow.cpp  title.cpp
+main.cpp         puzzleview.cpp  puzzlewindow.h    title.h
+puzzlemodel.cpp  puzzleview.h    puzzlewindow.ui
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzlewindow.ui
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PuzzleWindow</class>
+ <widget class="QMainWindow" name="PuzzleWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>709</width>
+    <height>286</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Puzzle</string>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>709</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzlewindow.h
+//
+//  puzzlewindow.hpp
+//  CS331_HW07
+//
+//  Created by yongqiang on 12/17/19.
+//  Copyright © 2019 yongqiang chen. All rights reserved.
+//
+
+#ifndef puzzlewindow_h_
+#define puzzlewindow_h_
+
+#include <QMainWindow>
+
+namespace Ui {
+class PuzzleWindow;
+}
+
+class PuzzleWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    explicit PuzzleWindow(QWidget *parent = 0);
+    ~PuzzleWindow();
+
+private:
+    Ui::PuzzleWindow *ui;
+};
+
+#endif /* puzzlewindow_hpp */
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat pz[Kuzzlewindow.cpp
+//
+//  puzzlewindow.cpp
+//  CS331_HW07
+//
+//  Created by Yongqiang chen on 12/17/19.
+//  Copyright © 2019 Yongqiang chen. All rights reserved.
+//
+
+#include "puzzlewindow.h"
+#include "puzzleview.h"
+
+PuzzleWindow::PuzzleWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::PuzzleWindow)
+{
+    ui->setupUi(this);
+
+    PuzzleModel *m_modal=new PuzzleModel();
+    PuzzleView *puzzleView=new PuzzleView(m_modal);
+    this->setCentralWidget(puzzleView);
+}
+
+PuzzleWindow::~PuzzleWindow()
+{
+    delete ui;
+}
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ ca[K[Kls
+hw07script       puzzlemodel.h   puzzlewindow.cpp  title.cpp
+main.cpp         puzzleview.cpp  puzzlewindow.h    title.h
+puzzlemodel.cpp  puzzleview.h    puzzlewindow.ui
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzleview.h
+//
+//  puzzleview.hpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 Yongqiang Chen. All rights reserved.
+//
+
+#ifndef puzzleview_h_
+#define puzzleview_h_
+
+#include <QObject>
+#include <QWidget>
+#include "puzzlemodel.h"
+#include "QGridLayout.h"
+#include "QButtonGroup.h"
+#include "qpushbutton.h"
+#include "tile.h"
+
+class PuzzleView : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit PuzzleView(PuzzleModel *model);
+
+private:
+    PuzzleModel *m_modal;
+    QGridLayout *m_layout;
+    QButtonGroup m_buttons;
+    QPushButton *shuffle;
+    QPushButton *quit;
+    Tile *tiles[15];
+
+public:
+    void tryToSlide(QAbstractButton *button);
+signals:
+
+public slots:
+    void refresh();
+    void onMove(int num);
+    void onShuffle();
+    void onQuit();
+};
+#endif /* puzzleview_hpp */
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzleview.cpp
+//
+//  puzzleview.cpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 Yongqiang Chen. All rights reserved.
+//
+
+
+#include "puzzleview.h"
+#include "qdebug.h"
+#include "QApplication"
+#include "qmessagebox.h"
+
+PuzzleView::PuzzleView(PuzzleModel *model)
+{
+    this->m_modal=model;
+    m_layout = new QGridLayout();
+    this->setLayout(m_Layout);
+
+    connect(&m_buttons,SIGNAL(buttonClicked(int)),this,SLOT(onMove(int)));
+
+    for(int i=0;i<15;i++){
+        tiles[i]=new Tile(i);
+        m_layout->addWidget(tiles[i],i/4,i%4);
+        m_buttons.addButton(tiles[i],i);
+    }
+
+    shuffle=new QPushButton("Shuffle");
+    connect(shuffle,SIGNAL(clicked()),this,SLOT(onShuffle()));
+    m_layout->addWidget(shuffle,1,4);
+
+    quit=new QPushButton("Quit");
+    connect(quit,SIGNAL(clicked()),this,SLOT(onQuit()));
+    m_Layout->addWidget(quit,2,4);
+
+    connect(model,SIGNAL(gridChanged()),this,SLOT(refresh()));
+    refresh();
+}
+
+void PuzzleView::refresh(){
+    for(int i=0;i<15;i++)
+        m_layout->removeWidget(tiles[i]);
+
+    for(int i=0;i<15;i++){
+        int pos=this->m_modal->value(i/4,i%4);
+        m_layout->addWidget(tiles[i],pos/4,pos%4);
+    }
+}
+
+void PuzzleView::tryToSlide(QAbstractButton *button){//try to slide the tile
+    Tile *tile=(Tile *)button;
+    bool win=this->m_modal->slide(tile->m_Number);
+    if(win)
+        QMessageBox::information(this,"Puzzle", "YOU WIN!                        ",QMessageBox::Ok);
+}
+
+void PuzzleView::onMove(int num){
+    tryToSlide(tiles[num]);
+}
+
+void PuzzleView::onShuffle(){
+    this->m_modal->shuffle();
+}
+
+void PuzzleView::onQuit(){
+    QApplication::exit();
+}
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ ls
+hw07script       puzzlemodel.h   puzzlewindow.cpp  title.cpp
+main.cpp         puzzleview.cpp  puzzlewindow.h    title.h
+puzzlemodel.cpp  puzzleview.h    puzzlewindow.ui
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzlemodel.h
+//
+//  puzzlemodle.hpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 Yongqiang Chen. All rights reserved.
+//
+
+#ifndef puzzlemodel_h_
+#define puzzlemodel_h_
+
+#include <QObject>
+#include<stdlib.h>
+#include<time.h>
+#include "qlist.h"
+
+namespace Ui{
+    class PuzzleModel;
+}
+class PuzzleModel : public QObject
+{
+    Q_OBJECT
+private:
+    QList<int> m_Positions;
+    int m_Rows;
+    int m_Cols;
+
+public:
+    explicit PuzzleModel(QObject *parent = 0);
+    int value(int r,int c);
+    bool slide(int tilenum);
+    bool neighboring(int r,int c);
+
+    void shuffle();
+    int randmove(int freePos);
+
+signals:
+    void gridChanged();
+
+};
+
+#endif /* puzzlemodel_h_ */
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat puzzlemodel.cpp
+//
+//  puzzlemodle.cpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 Yongqiang Chen. All rights reserved.
+//
+
+#include "puzzlemodel.h"
+#include "qdebug.h"
+
+PuzzleModel::PuzzleModel(QObject *parent) : QObject(parent)
+{
+    m_Rows=4;
+    m_Cols=4;
+    srand(time(0));
+    int place[16];
+    for(int i=0;i<16;i++)
+        place[i]=i;
+
+    int left=16;
+    for(int i=0;i<15;i++){
+        int r=rand()%left;
+        m_Positions.append(place[r]);
+
+        
+        for(int j=r;j<left-1;j++)
+            place[j]=place[j+1];
+        left--;
+    }
+}
+
+int PuzzleModel::value(int r,int c){
+    int index=r*4+c;
+    return m_Positions.at(index);
+}
+
+bool PuzzleModel::slide(int tilenum){
+    int pos=m_Positions.at(tilenum);
+    int r=pos/4;
+    int c=pos%4;
+
+    int x,y;
+    int xarr[4]={-1,1,0,0};
+    int yarr[4]={0,0,-1,1};
+
+    
+    for(int i=0;i<4;i++){
+        x=xarr[i]+r;
+        y=yarr[i]+c;
+        if(this->neighboring(x,y)){
+            m_Positions.replace(tilenum,x*4+y);
+            emit gridChanged();
+            break;
+        }
+    }
+   
+    bool win=true;
+    for(int i=0;i<15;i++){
+        int pos=m_Positions.at(i);
+        if(pos!=i){
+            win=false;
+            break;
+        }
+    }
+    return win;
+}
+
+bool PuzzleModel::neighboring(int r,int c){
+    if(r<0||r>3||c<0||c>3)
+        return false;
+
+    int pos=r*4+c;
+    bool find=true;
+    for(int i=0;i<15;i++){
+        if(m_Positions.at(i)==pos){
+            find=false;
+            break;
+        }
+    }
+    return find;
+}
+
+int PuzzleModel::randmove(int freePos){
+    int r=freePos/4;
+    int c=freePos%4;
+    int x[4],y[4];
+    int xarr[4]={-1,1,0,0};
+    int yarr[4]={0,0,-1,1};
+
+    
+    int count=0;
+    int i;
+    for(i=0;i<4;i++){
+        int x1=xarr[i]+r;
+        int y1=yarr[i]+c;
+        if(x1>=0&&x1<4&&y1>=0&&y1<4){
+            x[count]=x1;
+            y[count]=y1;
+            count++;
+        }
+    }
+
+    
+    int t=rand()%count;
+    int pos=x[t]*4+y[t];
+    for(i=0;i<15;i++){
+        int k=m_Positions.at(i);
+        if(k==pos)
+            break;
+    }
+    m_Positions.replace(i,freePos);
+
+    
+    return pos;
+}
+
+void PuzzleModel::shuffle(){
+    int i,j;
+   
+    for(i=0;i<16;i++){
+        bool find=false;
+        for(j=0;j<15;j++){
+            int k=m_Positions.at(j);
+            if(k==i){
+                find=true;
+                break;
+            }
+        }
+        if(!find)
+            break;
+    }
+    int pos=i;
+
+  
+    for(i=0;i<50;i++)
+        pos=this->randmove(pos);
+    emit gridChanged();
+}
+
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat main.cpp 
+//
+//  main.cpp
+//  CS331_HW07
+//
+//  Created by Yongqiang Chen on 12/17/19.
+//  Copyright © 2019 yongqiang chen. All rights reserved.
+//
+
+
+#include "puzzlewindow.h"
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    PuzzleWindow window;
+    window.show();
+
+    return a.exec();
+}
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ ls
+hw07script       puzzlemodel.h   puzzlewindow.cpp  title.cpp
+main.cpp         puzzleview.cpp  puzzlewindow.h    title.h
+puzzlemodel.cpp  puzzleview.h    puzzlewindow.ui
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32mchenyu@chenyu-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ qmake -project
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32mchenyu@chenyu-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ qmka[K[Kake
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32mchenyu@chenyu-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ cat Makefile 
+#############################################################################
+# Makefile for building: CS331_HW07
+# Generated by qmake (2.01a) (Qt 4.8.7) on: Tue Dec 17 22:11:57 2019
+# Project:  CS331_HW07.pro
+# Template: app
+# Command: /usr/lib/x86_64-linux-gnu/qt4/bin/qmake -o Makefile CS331_HW07.pro
+#############################################################################
+
+####### Compiler, tools and options
+
+CC            = gcc
+CXX           = g++
+DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
+CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
+INCPATH       = -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -I.
+LINK          = g++
+LFLAGS        = -m64 -Wl,-O1
+LIBS          = $(SUBLIBS)  -L/usr/lib/x86_64-linux-gnu -lQtGui -lQtCore -lpthread 
+AR            = ar cqs
+RANLIB        = 
+QMAKE         = /usr/lib/x86_64-linux-gnu/qt4/bin/qmake
+TAR           = tar -cf
+COMPRESS      = gzip -9f
+COPY          = cp -f
+SED           = sed
+COPY_FILE     = $(COPY)
+COPY_DIR      = $(COPY) -r
+STRIP         = strip
+INSTALL_FILE  = install -m 644 -p
+INSTALL_DIR   = $(COPY_DIR)
+INSTALL_PROGRAM = install -m 755 -p
+DEL_FILE      = rm -f
+SYMLINK       = ln -f -s
+DEL_DIR       = rmdir
+MOVE          = mv -f
+CHK_DIR_EXISTS= test -d
+MKDIR         = mkdir -p
+
+####### Output directory
+
+OBJECTS_DIR   = ./
+
+####### Files
+
+SOURCES       = main.cpp \
+		puzzlemodel.cpp \
+		puzzleview.cpp \
+		puzzlewindow.cpp \
+		title.cpp moc_puzzlemodel.cpp \
+		moc_puzzleview.cpp \
+		moc_puzzlewindow.cpp
+OBJECTS       = main.o \
+		puzzlemodel.o \
+		puzzleview.o \
+		puzzlewindow.o \
+		title.o \
+		moc_puzzlemodel.o \
+		moc_puzzleview.o \
+		moc_puzzlewindow.o
+DIST          = /usr/share/qt4/mkspecs/common/unix.conf \
+		/usr/share/qt4/mkspecs/common/linux.conf \
+		/usr/share/qt4/mkspecs/common/gcc-base.conf \
+		/usr/share/qt4/mkspecs/common/gcc-base-unix.conf \
+		/usr/share/qt4/mkspecs/common/g++-base.conf \
+		/usr/share/qt4/mkspecs/common/g++-unix.conf \
+		/usr/share/qt4/mkspecs/qconfig.pri \
+		/usr/share/qt4/mkspecs/features/qt_functions.prf \
+		/usr/share/qt4/mkspecs/features/qt_config.prf \
+		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
+		/usr/share/qt4/mkspecs/features/default_pre.prf \
+		/usr/share/qt4/mkspecs/features/release.prf \
+		/usr/share/qt4/mkspecs/features/default_post.prf \
+		/usr/share/qt4/mkspecs/features/shared.prf \
+		/usr/share/qt4/mkspecs/features/unix/gdb_dwarf_index.prf \
+		/usr/share/qt4/mkspecs/features/warn_on.prf \
+		/usr/share/qt4/mkspecs/features/qt.prf \
+		/usr/share/qt4/mkspecs/features/unix/thread.prf \
+		/usr/share/qt4/mkspecs/features/moc.prf \
+		/usr/share/qt4/mkspecs/features/resources.prf \
+		/usr/share/qt4/mkspecs/features/uic.prf \
+		/usr/share/qt4/mkspecs/features/yacc.prf \
+		/usr/share/qt4/mkspecs/features/lex.prf \
+		/usr/share/qt4/mkspecs/features/include_source_dir.prf \
+		CS331_HW07.pro
+QMAKE_TARGET  = CS331_HW07
+DESTDIR       = 
+TARGET        = CS331_HW07
+
+first: all
+####### Implicit rules
+
+.SUFFIXES: .o .c .cpp .cc .cxx .C
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+.cc.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+.cxx.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+.C.o:
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(INCPATH) -o "$@" "$<"
+
+####### Build rules
+
+all: Makefile $(TARGET)
+
+$(TARGET): ui_puzzlewindow.h $(OBJECTS)  
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
+
+Makefile: CS331_HW07.pro  /usr/share/qt4/mkspecs/linux-g++-64/qmake.conf /usr/share/qt4/mkspecs/common/unix.conf \
+		/usr/share/qt4/mkspecs/common/linux.conf \
+		/usr/share/qt4/mkspecs/common/gcc-base.conf \
+		/usr/share/qt4/mkspecs/common/gcc-base-unix.conf \
+		/usr/share/qt4/mkspecs/common/g++-base.conf \
+		/usr/share/qt4/mkspecs/common/g++-unix.conf \
+		/usr/share/qt4/mkspecs/qconfig.pri \
+		/usr/share/qt4/mkspecs/features/qt_functions.prf \
+		/usr/share/qt4/mkspecs/features/qt_config.prf \
+		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
+		/usr/share/qt4/mkspecs/features/default_pre.prf \
+		/usr/share/qt4/mkspecs/features/release.prf \
+		/usr/share/qt4/mkspecs/features/default_post.prf \
+		/usr/share/qt4/mkspecs/features/shared.prf \
+		/usr/share/qt4/mkspecs/features/unix/gdb_dwarf_index.prf \
+		/usr/share/qt4/mkspecs/features/warn_on.prf \
+		/usr/share/qt4/mkspecs/features/qt.prf \
+		/usr/share/qt4/mkspecs/features/unix/thread.prf \
+		/usr/share/qt4/mkspecs/features/moc.prf \
+		/usr/share/qt4/mkspecs/features/resources.prf \
+		/usr/share/qt4/mkspecs/features/uic.prf \
+		/usr/share/qt4/mkspecs/features/yacc.prf \
+		/usr/share/qt4/mkspecs/features/lex.prf \
+		/usr/share/qt4/mkspecs/features/include_source_dir.prf \
+		/usr/lib/x86_64-linux-gnu/libQtGui.prl \
+		/usr/lib/x86_64-linux-gnu/libQtCore.prl
+	$(QMAKE) -o Makefile CS331_HW07.pro
+/usr/share/qt4/mkspecs/common/unix.conf:
+/usr/share/qt4/mkspecs/common/linux.conf:
+/usr/share/qt4/mkspecs/common/gcc-base.conf:
+/usr/share/qt4/mkspecs/common/gcc-base-unix.conf:
+/usr/share/qt4/mkspecs/common/g++-base.conf:
+/usr/share/qt4/mkspecs/common/g++-unix.conf:
+/usr/share/qt4/mkspecs/qconfig.pri:
+/usr/share/qt4/mkspecs/features/qt_functions.prf:
+/usr/share/qt4/mkspecs/features/qt_config.prf:
+/usr/share/qt4/mkspecs/features/exclusive_builds.prf:
+/usr/share/qt4/mkspecs/features/default_pre.prf:
+/usr/share/qt4/mkspecs/features/release.prf:
+/usr/share/qt4/mkspecs/features/default_post.prf:
+/usr/share/qt4/mkspecs/features/shared.prf:
+/usr/share/qt4/mkspecs/features/unix/gdb_dwarf_index.prf:
+/usr/share/qt4/mkspecs/features/warn_on.prf:
+/usr/share/qt4/mkspecs/features/qt.prf:
+/usr/share/qt4/mkspecs/features/unix/thread.prf:
+/usr/share/qt4/mkspecs/features/moc.prf:
+/usr/share/qt4/mkspecs/features/resources.prf:
+/usr/share/qt4/mkspecs/features/uic.prf:
+/usr/share/qt4/mkspecs/features/yacc.prf:
+/usr/share/qt4/mkspecs/features/lex.prf:
+/usr/share/qt4/mkspecs/features/include_source_dir.prf:
+/usr/lib/x86_64-linux-gnu/libQtGui.prl:
+/usr/lib/x86_64-linux-gnu/libQtCore.prl:
+qmake:  FORCE
+	@$(QMAKE) -o Makefile CS331_HW07.pro
+
+dist: 
+	@$(CHK_DIR_EXISTS) .tmp/CS331_HW071.0.0 || $(MKDIR) .tmp/CS331_HW071.0.0 
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/CS331_HW071.0.0/ && $(COPY_FILE) --parents puzzlemodel.h puzzleview.h puzzlewindow.h title.h .tmp/CS331_HW071.0.0/ && $(COPY_FILE) --parents main.cpp puzzlemodel.cpp puzzleview.cpp puzzlewindow.cpp title.cpp .tmp/CS331_HW071.0.0/ && $(COPY_FILE) --parents puzzlewindow.ui .tmp/CS331_HW071.0.0/ && (cd `dirname .tmp/CS331_HW071.0.0` && $(TAR) CS331_HW071.0.0.tar CS331_HW071.0.0 && $(COMPRESS) CS331_HW071.0.0.tar) && $(MOVE) `dirname .tmp/CS331_HW071.0.0`/CS331_HW071.0.0.tar.gz . && $(DEL_FILE) -r .tmp/CS331_HW071.0.0
+
+
+clean:compiler_clean 
+	-$(DEL_FILE) $(OBJECTS)
+	-$(DEL_FILE) *~ core *.core
+
+
+####### Sub-libraries
+
+distclean: clean
+	-$(DEL_FILE) $(TARGET) 
+	-$(DEL_FILE) Makefile
+
+
+check: first
+
+mocclean: compiler_moc_header_clean compiler_moc_source_clean
+
+mocables: compiler_moc_header_make_all compiler_moc_source_make_all
+
+compiler_moc_header_make_all: moc_puzzlemodel.cpp moc_puzzleview.cpp moc_puzzlewindow.cpp
+compiler_moc_header_clean:
+	-$(DEL_FILE) moc_puzzlemodel.cpp moc_puzzleview.cpp moc_puzzlewindow.cpp
+moc_puzzlemodel.cpp: puzzlemodel.h
+	/usr/lib/x86_64-linux-gnu/qt4/bin/moc $(DEFINES) $(INCPATH) puzzlemodel.h -o moc_puzzlemodel.cpp
+
+moc_puzzleview.cpp: puzzlemodel.h \
+		puzzleview.h
+	/usr/lib/x86_64-linux-gnu/qt4/bin/moc $(DEFINES) $(INCPATH) puzzleview.h -o moc_puzzleview.cpp
+
+moc_puzzlewindow.cpp: puzzlewindow.h
+	/usr/lib/x86_64-linux-gnu/qt4/bin/moc $(DEFINES) $(INCPATH) puzzlewindow.h -o moc_puzzlewindow.cpp
+
+compiler_rcc_make_all:
+compiler_rcc_clean:
+compiler_image_collection_make_all: qmake_image_collection.cpp
+compiler_image_collection_clean:
+	-$(DEL_FILE) qmake_image_collection.cpp
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
+compiler_uic_make_all: ui_puzzlewindow.h
+compiler_uic_clean:
+	-$(DEL_FILE) ui_puzzlewindow.h
+ui_puzzlewindow.h: puzzlewindow.ui
+	/usr/lib/x86_64-linux-gnu/qt4/bin/uic puzzlewindow.ui -o ui_puzzlewindow.h
+
+compiler_yacc_decl_make_all:
+compiler_yacc_decl_clean:
+compiler_yacc_impl_make_all:
+compiler_yacc_impl_clean:
+compiler_lex_make_all:
+compiler_lex_clean:
+compiler_clean: compiler_moc_header_clean compiler_uic_clean 
+
+####### Compile
+
+main.o: main.cpp puzzlewindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
+
+puzzlemodel.o: puzzlemodel.cpp puzzlemodel.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o puzzlemodel.o puzzlemodel.cpp
+
+puzzleview.o: puzzleview.cpp puzzleview.h \
+		puzzlemodel.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o puzzleview.o puzzleview.cpp
+
+puzzlewindow.o: puzzlewindow.cpp puzzlewindow.h \
+		puzzleview.h \
+		puzzlemodel.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o puzzlewindow.o puzzlewindow.cpp
+
+title.o: title.cpp title.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o title.o title.cpp
+
+moc_puzzlemodel.o: moc_puzzlemodel.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_puzzlemodel.o moc_puzzlemodel.cpp
+
+moc_puzzleview.o: moc_puzzleview.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_puzzleview.o moc_puzzleview.cpp
+
+moc_puzzlewindow.o: moc_puzzlewindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_puzzlewindow.o moc_puzzlewindow.cpp
+
+####### Install
+
+install:   FORCE
+
+uninstall:   FORCE
+
+FORCE:
+
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ CAT[K[K[Kcat CS331_HW07.pro 
+######################################################################
+# Automatically generated by qmake (2.01a) Tue Dec 17 22:11:55 2019
+######################################################################
+
+TEMPLATE = app
+TARGET = 
+DEPENDPATH += .
+INCLUDEPATH += .
+
+# Input
+HEADERS += puzzlemodel.h puzzleview.h puzzlewindow.h title.h
+FORMS += puzzlewindow.ui
+SOURCES += main.cpp puzzlemodel.cpp puzzleview.cpp puzzlewindow.cpp title.cpp
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ mk[Kake
+/usr/lib/x86_64-linux-gnu/qt4/bin/uic puzzlewindow.ui -o ui_puzzlewindow.h
+g++ -c -m64 -pipe -O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -I. -o main.o main.cpp
+g++ -c -m64 -pipe -O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -I. -o puzzlemodel.o puzzlemodel.cpp
+g++ -c -m64 -pipe -O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -I. -o puzzleview.o puzzleview.cpp
+In file included from [01m[Kpuzzleview.cpp:10:0[m[K:
+[01m[Kpuzzleview.h:15:10:[m[K [01;31m[Kfatal error: [m[KQGridLayout.h: No such file or directory
+ #include [01;31m[K"QGridLayout.h"[m[K
+          [01;31m[K^~~~~~~~~~~~~~~[m[K
+compilation terminated.
+Makefile:240: recipe for target 'puzzleview.o' failed
+make: *** [puzzleview.o] Error 1
+]0;yongqiang@yongqiang-VirtualBox: ~/CS/CS331_HW07[01;32myongqiang@yongqiang-VirtualBox[00m:[01;34m~/CS/CS331_HW07[00m$ exit
+exit
+
+Script done on 2019-12-17 22:12:33-0500
