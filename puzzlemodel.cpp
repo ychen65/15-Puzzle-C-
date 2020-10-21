@@ -2,8 +2,8 @@
 //  puzzlemodle.cpp
 //  CS331_HW07
 //
-//  Created by Chenyu Wang on 12/17/19.
-//  Copyright © 2019 chenyu wang. All rights reserved.
+//  Created by yongqiang chen on 12/17/19.
+//  Copyright © 2019 yongqiang chen. All rights reserved.
 //
 
 #include "puzzlemodel.h"
